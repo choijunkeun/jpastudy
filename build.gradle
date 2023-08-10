@@ -25,6 +25,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+//	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5-jakarta'
+
+
 	// 이런 라이브러리는 운영에 배포할 때는 꼭 성능 테스트를 해보고 괜찮다 싶으면 반영해야한다.(성능저하에 원인이 될 수도 있기 때문에)
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 

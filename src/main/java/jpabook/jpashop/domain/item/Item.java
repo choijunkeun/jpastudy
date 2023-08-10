@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)   // 싱글테이블전략
 @DiscriminatorColumn(name = "dtype")
 @Getter @Setter
 public abstract class Item {
