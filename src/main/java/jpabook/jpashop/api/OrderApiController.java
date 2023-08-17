@@ -11,6 +11,8 @@ import jpabook.jpashop.repository.order.query.OrderFlatDto;
 import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
+import jpabook.jpashop.service.query.OrderDto;
+import jpabook.jpashop.service.query.OrderQueryService;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -54,15 +56,27 @@ public class OrderApiController {
         return result;
     }
 
-    @GetMapping("/api/v3/orders")
-    public List<OrderDto> ordersV3() {
-        List<Order> orders = orderRepository.findAllWithItem();
-        List<OrderDto> result = orders.stream()
-                .map(o -> new OrderDto(o))
-                .collect(toList());
 
-        return result;
+//    @GetMapping("/api/v3/orders")
+//    public List<OrderDto> ordersV3() {      // OSIV True 일 경우,
+//        List<Order> orders = orderRepository.findAllWithItem();
+//
+//        List<OrderDto> result = orders.stream()
+//                .map(o -> new OrderDto(o))
+//                .collect(toList());
+//
+//        return result;
+//    }
+
+    private final OrderQueryService orderQueryService;
+
+    @GetMapping("/api/v3/orders")   // OSIV false일 경우
+    public List<jpabook.jpashop.service.query.OrderDto> orderV3() {
+        return orderQueryService.ordersV3();
     }
+
+
+
 
     @GetMapping("/api/v3.1/orders")
     public List<OrderDto> ordersV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,

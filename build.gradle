@@ -1,8 +1,18 @@
+buildscript {
+	dependencies {
+		classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.10")
+	}
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.0.6'
 	id 'io.spring.dependency-management' version '1.1.0'
 }
+
+//apply plugin: 'io.spring.dependency-management'
+apply plugin: "com.ewerk.gradle.plugins.querydsl"
+
 
 group = 'jpabook'
 version = '0.0.1-SNAPSHOT'
@@ -28,10 +38,14 @@ dependencies {
 //	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5-jakarta'
 
+	//Querydsl 추가(스프링부트 3.x이후)
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
-	// 이런 라이브러리는 운영에 배포할 때는 꼭 성능 테스트를 해보고 괜찮다 싶으면 반영해야한다.(성능저하에 원인이 될 수도 있기 때문에)
+// 이런 라이브러리는 운영에 배포할 때는 꼭 성능 테스트를 해보고 괜찮다 싶으면 반영해야한다.(성능저하에 원인이 될 수도 있기 때문에)
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
-
 
 	testImplementation 'junit:junit:4.13.1'
 	compileOnly 'org.projectlombok:lombok'
@@ -40,6 +54,35 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+//qerydsl 추가
+def querydslDir = 'src/main/generated'
+//def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	library = "com.querydsl:querydsl-apt"
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src/main/java', querydslDir]
+		} }
+}
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+configurations {
+	querydsl.extendsFrom compileClasspath
+}
+
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+clean {
+	delete file('src/main/generated')
+}
+
